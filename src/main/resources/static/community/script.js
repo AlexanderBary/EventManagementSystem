@@ -1,14 +1,14 @@
 const loadAllCommunities = () => {
     cleanCommunities();
     let domain = window.location.origin;
-    fetch(domain + '/community')
+    fetch(domain + '/community/controller')
         .then(response => response.json())
         .then(communities => {
             communities.forEach(community => {
                 $("#communityGrid")
                     .append(
                         '<tr>' +
-                        '<td>' + '<a href="' + domain + '/community.html?id=' + community.id + '">' + community.id + '</a>' + '</td>' +
+                        '<td>' + '<a href="/community/community.html?id=' + community.id + '">' + community.id + '</a>' + '</td>' +
                         '<td>' + community.name + '</td>' +
                         '</tr>');
             });
@@ -20,7 +20,7 @@ const loadCommunityById = () => {
     let domain = window.location.origin;
     let url = window.location.href;
     let id = url.substring(url.lastIndexOf('=') + 1);
-    fetch(domain + '/community/' + id)
+    fetch(domain + '/community/controller/' + id)
         .then(response => response.json())
         .then(community => {
             $("#communityGrid")
@@ -30,6 +30,23 @@ const loadCommunityById = () => {
                     '<td>' + community.name + '</td>' +
                     '</tr>');
         });
+}
+
+const createNewCommunity = () => {
+    let domain = window.location.origin;
+    const newCommunity = {
+        communityId: $("#newCommunityId").val(),
+        communityName: $("#newCommunityName").val()
+    };
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(newCommunity)
+    };
+    fetch(domain + '/community/controller', requestOptions)
+        .then(response => response.json())
+        .then(data => alert('New community: ' + JSON.stringify(data) + ' been added!'))
+        .catch(error => alert('Error occurred during saving new community: ' + JSON.stringify(error)));
 }
 
 const cleanCommunities = () => {
@@ -65,31 +82,7 @@ const loadEmployeesByLetters = () => {
 }
 
 
-const addNewEmployee = () => {
-    const newEmployee = {
-        employeeId: $("#newEmployeeId").val(),
-        firstName: $("#newEmployeeFirstName").val(),
-        lastName: $("#newEmployeeLastName").val(),
-        email: $("#newEmployeeEmail").val(),
-        phoneNumber: $("#newEmployeePhoneNumber").val(),
-        hireDate: $("#newEmployeeHireDate").val(),
-        jobId: $("#newEmployeeJobId").val(),
-        salary: $("#newEmployeeSalary").val(),
-        commissionPct: $("#newEmployeeCommissionPct").val(),
-        managerId: $("#newEmployeeManagerId").val(),
-        departmentId: $("#newEmployeeDepartmentId").val()
-    }
-    const requestOptions = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(newEmployee)
-    };
-    let domain = window.location.origin;
-    fetch(domain + '/employees', requestOptions)
-        .then(response => response.json())
-        .then(data => alert('new employee: ' + JSON.stringify(data) + ' been added!'))
-        .catch(error => alert('error occured during saving new citizen: ' + JSON.stringify(error)));
-}
+
 
 const loadAllCitizens = () => {
     let domain = window.location.origin;

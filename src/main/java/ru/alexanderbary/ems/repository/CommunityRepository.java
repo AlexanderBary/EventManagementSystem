@@ -1,6 +1,7 @@
 package ru.alexanderbary.ems.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.alexanderbary.ems.model.Community;
 
 import java.util.List;
@@ -28,7 +29,11 @@ public class CommunityRepository {
     }
 
     public void add(Community community) {
-        this.COMMUNITIES.add(community);
+        this.COMMUNITIES.add(new Community(
+                community.getId(),
+                community.getName()
+            )
+        );
     }
 
     public void deleteById(Long id) {

@@ -9,7 +9,7 @@ import ru.alexanderbary.ems.model.Community;
 import java.util.List;
 
 @RestController
-@RequestMapping("/community")
+@RequestMapping("/community/controller")
 public class CommunityController {
 
     private final CommunityRepository communityRepository;
@@ -30,9 +30,8 @@ public class CommunityController {
     }
 
     @PostMapping()
-    public Community create(@RequestBody Community community) {
+    public void create(@RequestBody Community community) {
         this.communityRepository.add(community);
-        return community;
     }
 
 
