@@ -35,8 +35,8 @@ const loadCommunityById = () => {
 const createNewCommunity = () => {
     let domain = window.location.origin;
     const newCommunity = {
-        communityId: $("#newCommunityId").val(),
-        communityName: $("#newCommunityName").val()
+        id: $("#newCommunityId").val(),
+        name: $("#newCommunityName").val()
     };
     const requestOptions = {
         method: 'POST',

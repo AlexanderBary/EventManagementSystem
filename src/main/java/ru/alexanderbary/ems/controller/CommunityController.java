@@ -3,38 +3,37 @@ package ru.alexanderbary.ems.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.alexanderbary.ems.repository.CommunityRepository;
+import ru.alexanderbary.ems.dao.CommunityDao;
 import ru.alexanderbary.ems.model.Community;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/community/controller")
 public class CommunityController {
 
-    private final CommunityRepository communityRepository;
+    private final CommunityDao communityDao;
 
     @Autowired
-    public CommunityController(CommunityRepository communityRepository) {
-        this.communityRepository = communityRepository;
+    public CommunityController(CommunityDao communityRepository) {
+        this.communityDao = communityRepository;
     }
 
     @GetMapping()
     public List<Community> getAll(Model model) {
-        return this.communityRepository.getAll();
+        return this.communityDao.getAll();
     }
 
     @GetMapping("/{id}")
-    public Community getById(@PathVariable Long id) {
-        return this.communityRepository.getById(id);
+    public Optional<Community> getById(@PathVariable Long id) {
+        return communityDao.getById(id);
     }
 
     @PostMapping()
     public void create(@RequestBody Community community) {
-        this.communityRepository.add(community);
+        this.communityDao.save(community);
     }
-
-
 
     @DeleteMapping()
     public String delete() {
