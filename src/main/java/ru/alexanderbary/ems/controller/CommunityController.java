@@ -1,42 +1,61 @@
 package ru.alexanderbary.ems.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.alexanderbary.ems.dao.CommunityDao;
 import ru.alexanderbary.ems.model.Community;
+import ru.alexanderbary.ems.service.CommunityService;
+import ru.alexanderbary.ems.util.CommunityErrorResponse;
+import ru.alexanderbary.ems.util.CommunityNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/community/controller")
+@RequestMapping("/api/community")
 public class CommunityController {
 
-    private final CommunityDao communityDao;
+    private final CommunityService communityService;
 
     @Autowired
-    public CommunityController(CommunityDao communityRepository) {
-        this.communityDao = communityRepository;
+    public CommunityController(CommunityService communityService) {
+        this.communityService = communityService;
     }
 
     @GetMapping()
-    public List<Community> getAll(Model model) {
-        return this.communityDao.getAll();
+    public List<Community> getCommunities() {
+        return communityService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Optional<Community> getById(@PathVariable Long id) {
-        return communityDao.getById(id);
+    public Community getCommunity(@PathVariable("id") Long id) {
+        return this.communityService.findOne(id);
     }
 
-    @PostMapping()
+    @ExceptionHandler
+    private ResponseEntity<CommunityErrorResponse> handleException(CommunityNotFoundException e) {
+        CommunityErrorResponse response = new CommunityErrorResponse(
+                "Community with this id wasn't found.",
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+
+    @PostMapping
     public void create(@RequestBody Community community) {
-        this.communityDao.save(community);
+        this.communityService.save(community);
     }
 
-    @DeleteMapping()
-    public String delete() {
-        return null;
+    @PatchMapping("/{id}")
+    public void update(@PathVariable Long id,
+                         @RequestBody Community community) {
+        this.communityService.update(id, community);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        this.communityService.delete(id);
+    }
+
 }

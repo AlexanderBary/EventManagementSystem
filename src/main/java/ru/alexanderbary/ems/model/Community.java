@@ -1,5 +1,9 @@
 package ru.alexanderbary.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -9,13 +13,18 @@ import java.util.List;
 
 @Entity
 @Table(name = "Community")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Community {
 
     public Community() {
     }
 
-    public Community(String name) {
+    public Community(Long id, String name, List<Event> events) {
+        this.id = id;
         this.name = name;
+        this.events = events;
     }
 
     @Id
@@ -23,14 +32,13 @@ public class Community {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "community_name")
-    @NotEmpty(message = "Community's name name should not be empty")
-    @Size(min=2, max=50, message = "Community's name should be between 2 and 50 characters")
+    @Column(name = "name")
+    @NotEmpty(message = "Community's name should not be empty")
+    @Size(min=2, max=30, message = "Community's name should be between 2 and 30 characters")
     private String name;
 
     @OneToMany(mappedBy = "owner")
     private List<Event> events;
-
 
     public Long getId() {
         return id;
