@@ -1,7 +1,8 @@
+let domain = window.location.origin;
+
 const loadAllCommunities = () => {
     cleanCommunities();
-    let domain = window.location.origin;
-    fetch(domain + '/community/controller')
+    fetch(domain + '/api/community')
         .then(response => response.json())
         .then(communities => {
             communities.forEach(community => {
@@ -15,25 +16,40 @@ const loadAllCommunities = () => {
         })
 }
 
+/*fetch('your url goes here')
+
+    .then(data => console.log('data is', data))
+    .catch(error => console.log('error is', error));*/
+
 const loadCommunityById = () => {
     cleanCommunities();
-    let domain = window.location.origin;
     let url = window.location.href;
     let id = url.substring(url.lastIndexOf('=') + 1);
-    fetch(domain + '/community/controller/' + id)
-        .then(response => response.json())
-        .then(community => {
-            $("#communityGrid")
-                .append(
-                    '<tr>' +
-                    '<td>' + community.id + '</td>' +
-                    '<td>' + community.name + '</td>' +
-                    '</tr>');
+    fetch(domain + '/api/community/' + id)
+        .then(response => {
+            if (response.ok) {
+                response.json()
+                    .then(community => {
+                        $("#communityGrid")
+                            .append(
+                                '<tr>' +
+                                '<td>' + community.id + '</td>' +
+                                '<td>' + community.name + '</td>' +
+                                '</tr>');
+                    });
+            } else if (response.status === 404) {
+                response.json()
+                    .then(community => {
+                        console.log(community.message);
+                        console.log(community.timestamp);
+                    })
+            } else {
+                Promise.reject(response.status + ' Error')
+            }
         });
 }
 
 const createNewCommunity = () => {
-    let domain = window.location.origin;
     const newCommunity = {
         id: $("#newCommunityId").val(),
         name: $("#newCommunityName").val()
@@ -43,7 +59,7 @@ const createNewCommunity = () => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(newCommunity)
     };
-    fetch(domain + '/community/controller', requestOptions)
+    fetch(domain + '/api/community', requestOptions)
         .then(response => response.json())
         .then(data => alert('New community: ' + JSON.stringify(data) + ' been added!'))
         .catch(error => alert('Error occurred during saving new community: ' + JSON.stringify(error)));
