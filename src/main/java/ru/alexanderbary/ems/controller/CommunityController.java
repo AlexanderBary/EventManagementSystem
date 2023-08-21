@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.alexanderbary.ems.model.Community;
 import ru.alexanderbary.ems.service.CommunityService;
-import ru.alexanderbary.ems.util.CommunityErrorResponse;
+import ru.alexanderbary.ems.util.ErrorResponse;
 import ru.alexanderbary.ems.util.CommunityNotFoundException;
 
 import java.util.List;
@@ -33,8 +33,8 @@ public class CommunityController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<CommunityErrorResponse> handleException(CommunityNotFoundException e) {
-        CommunityErrorResponse response = new CommunityErrorResponse(
+    private ResponseEntity<ErrorResponse> handleException(CommunityNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(
                 "Community with this id wasn't found.",
                 System.currentTimeMillis()
         );
