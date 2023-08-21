@@ -1,11 +1,11 @@
 package ru.alexanderbary.ems.util;
 
-public class CommunityErrorResponse {
+public class ErrorResponse {
 
     private String message;
     private long timestamp;
 
-    public CommunityErrorResponse(String message, long timestamp) {
+    public ErrorResponse(String message, long timestamp) {
         this.message = message;
         this.timestamp = timestamp;
     }
