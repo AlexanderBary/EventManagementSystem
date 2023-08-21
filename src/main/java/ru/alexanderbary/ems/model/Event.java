@@ -1,26 +1,33 @@
 package ru.alexanderbary.ems.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
 @Entity
-@Table(name = "event")
+@Table(name = "Event")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Event {
 
     public Event() {}
 
-    public Event(String name, String description, Integer capacity, Community owner, List<Category> categories, List<Customer> customers, Location location) {
+    public Event(Long id, String name, String description, Integer capacity, Community owner, Location location, List<Category> categories, List<Customer> customers) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.capacity = capacity;
         this.owner = owner;
+        this.location = location;
         this.categories = categories;
         this.customers = customers;
-        this.location = location;
     }
 
     @Id
@@ -41,19 +48,28 @@ public class Event {
     private Integer capacity;
 
     @ManyToOne
-    @JoinColumn(name = "community_id")
+    @JoinColumn(name = "community_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Community owner;
 
+    @ManyToOne
+    @JoinColumn(name = "location_id", nullable = false)
+    //@JsonIgnore
+    private Location location;
 
-    @ManyToMany(mappedBy = "events") // будет ли работать корректно
+
+    @ManyToMany
+    @JoinTable(name = "event_category",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
-    @ManyToMany(mappedBy = "events") // будет ли работать корректно
+    @ManyToMany
+    @JoinTable(name = "event_customer",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id"))
     private List<Customer> customers;
-
-    @OneToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
 
     public Long getId() {
         return id;
@@ -87,12 +103,20 @@ public class Event {
         this.capacity = capacity;
     }
 
-    public Community getOwner() {
+    public Community getCommunity() {
         return owner;
     }
 
-    public void setOwner(Community owner) {
+    public void setCommunity(Community owner) {
         this.owner = owner;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public List<Category> getCategories() {
@@ -109,13 +133,5 @@ public class Event {
 
     public void setCustomers(List<Customer> customers) {
         this.customers = customers;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 }

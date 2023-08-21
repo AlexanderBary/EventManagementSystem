@@ -1,5 +1,6 @@
 package ru.alexanderbary.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -7,8 +8,16 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Table(name = "category")
+@Table(name = "Category")
 public class Category {
+
+    public Category() {
+    }
+
+    public Category(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Id
     @Column(name = "id")
@@ -20,10 +29,8 @@ public class Category {
     @Size(min=2, max=50, message = "Category's name should be between 2 and 50 characters")
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "event_category",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
     private List<Event> events;
 
     public Long getId() {

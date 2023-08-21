@@ -1,5 +1,6 @@
 package ru.alexanderbary.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Table(name = "customer")
+@Table(name = "Customer")
 public class Customer {
 
     public Customer() {}
@@ -39,10 +40,8 @@ public class Customer {
     @Email(message = "Email should be valid")
     private String email;
 
-    @ManyToMany
-    @JoinTable(name = "event_customer",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @ManyToMany(mappedBy = "customers")
+    @JsonIgnore
     private List<Event> events;
 
     public Long getId() {

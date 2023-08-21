@@ -1,21 +1,31 @@
 package ru.alexanderbary.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 @Entity
-@Table(name = "location")
+@Table(name = "Location")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Location {
 
     public Location() {}
 
-    public Location(String name, String city, String street, Integer houseNumber) {
+    public Location(Long id, String name, String city, String street, Integer houseNumber, List<Event> events) {
+        this.id = id;
         this.name = name;
         this.city = city;
         this.street = street;
         this.houseNumber = houseNumber;
+        this.events = events;
     }
 
     @Id
@@ -41,6 +51,10 @@ public class Location {
     @Column(name = "house_number")
     @NotNull(message = "House's number should not be empty")
     private Integer houseNumber;
+
+    @OneToMany(mappedBy="location")
+    @JsonIgnore
+    private List<Event> events;
 
     public Long getId() {
         return id;
@@ -80,5 +94,13 @@ public class Location {
 
     public void setHouseNumber(Integer houseNumber) {
         this.houseNumber = houseNumber;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 }
